@@ -429,17 +429,31 @@
       </article>
 
       <article class="card rv" data-domain="applied">
-        <div class="card-top"><h3 style="margin:0">airops</h3><span class="p-domain">Applied · Python</span></div>
-        <div class="p-tag">aircraft fault detection + airport operations</div>
-        <p class="desc">Two operations systems, built test-first but architected like latency-critical software. A vectorized ARINC-429 telemetry simulator detects faults, localises them to a subsystem, and traces cascades to one root cause. A gate-and-flow scheduler pairs a CP-SAT solver with a reinforcement-learning policy to re-plan a full airport far faster than real time. All data synthetic, from documented simulators.</p>
+        <div class="card-top"><h3 style="margin:0">Avionics Fault Detection</h3><span class="p-domain">Applied · Python</span></div>
+        <div class="p-tag">sensor → anomaly → diagnosis</div>
+        <p class="desc">A vectorized ARINC-429 avionics-bus simulator with injectable faults and fault-propagation modelling, feeding a detection pipeline that turns a raw signal into a diagnosis: it localises a fault to a subsystem and traces cascades to a single root cause. Streams millions of samples a second. Part of the airops repo.</p>
         <div class="viz" data-viz="signal"><span class="vlabel">arinc-429 · fault injected</span><span class="vbig">7.8<span class="u">M</span>/s</span></div>
         <div class="metrics">
           <div class="metric"><div class="mv">7.8 M/s</div><div class="ml">telemetry</div></div>
-          <div class="metric"><div class="mv">50,000×</div><div class="ml">real-time ops</div></div>
-          <div class="metric"><div class="mv">149</div><div class="ml">tests</div></div>
+          <div class="metric"><div class="mv">15–130×</div><div class="ml">speedup</div></div>
+          <div class="metric"><div class="mv">ARINC-429</div><div class="ml">bus model</div></div>
         </div>
-        <div class="stack"><span>Python</span><span>NumPy</span><span>ARINC-429</span><span>CP-SAT</span><span>RL</span></div>
+        <div class="stack"><span>Python</span><span>NumPy</span><span>ARINC-429</span><span>anomaly detection</span></div>
         <div class="card-links"><span class="ff">private · simulation</span></div>
+      </article>
+
+      <article class="card rv" data-domain="applied">
+        <div class="card-top"><h3 style="margin:0">Airport-Ops Optimizer</h3><span class="p-domain">Applied / OR · Python</span></div>
+        <div class="p-tag">constraint solving + reinforcement learning</div>
+        <p class="desc">A gate-and-flow scheduler that pairs a CP-SAT constraint solver with a reinforcement-learning policy and a flow predictor. It re-plans a full airport's operations tens of thousands of times faster than real time. Part of the airops repo.</p>
+        <div class="viz" data-viz="gantt"><span class="vlabel">gate schedule</span><span class="vbig">50<span class="u">k×</span> real-time</span></div>
+        <div class="metrics">
+          <div class="metric"><div class="mv">CP-SAT</div><div class="ml">+ RL policy</div></div>
+          <div class="metric"><div class="mv">97</div><div class="ml">tests</div></div>
+          <div class="metric"><div class="mv">50,000×</div><div class="ml">real-time</div></div>
+        </div>
+        <div class="stack"><span>Python</span><span>OR-Tools</span><span>reinforcement learning</span></div>
+        <div class="card-links"><span class="ff">private · optimization</span></div>
       </article>
 
       <article class="card rv" data-domain="quant">
