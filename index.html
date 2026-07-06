@@ -11,17 +11,19 @@
     --bg:#F5F5F7; --surface:#FFFFFF; --surface-2:#FBFBFD; --surface-alt:#F0F0F3;
     --text:#1D1D1F; --muted:#6E6E73; --faint:#86868B;
     --hair:#D9D9DE; --hair-2:#C7C7CC;
-    --accent:#0071E3; --accent-press:#0058B9; --green:#34C759; --red:#FF3B30; --purple:#AF52DE; --teal:#30B0C7;
+    --accent:#0071E3; --accent-press:#0058B9; --green:#34C759; --red:#FF3B30; --purple:#AF52DE; --teal:#30B0C7; --orange:#FF9500;
+    --c-systems:#0071E3; --c-quant:#34C759; --c-ai:#AF52DE; --c-applied:#FF9500;
     --chip:#EFEFF2; --chip-line:#E2E2E7;
     --shadow-sm:0 1px 2px rgba(0,0,0,.05),0 1px 1px rgba(0,0,0,.04);
     --shadow:0 2px 6px rgba(0,0,0,.05),0 12px 34px rgba(0,0,0,.06);
     --shadow-lg:0 4px 14px rgba(0,0,0,.07),0 24px 60px rgba(0,0,0,.09);
     --nav:rgba(245,245,247,.72);
     --viz-bg:#F7F7FA;
+    --glow-1:rgba(0,113,227,.14); --glow-2:rgba(48,176,199,.11); --glow-3:rgba(175,82,222,.10);
     --display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",system-ui,sans-serif;
     --body:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",system-ui,sans-serif;
     --mono:ui-monospace,"SF Mono","SFMono-Regular",Menlo,monospace;
-    --maxw:1040px; --r:20px; --r-sm:13px;
+    --maxw:1180px; --r:20px; --r-sm:13px;
   }
   html[data-theme="dark"]{
     --bg:#000000; --surface:#1C1C1E; --surface-2:#161618; --surface-alt:#242426;
@@ -34,6 +36,8 @@
     --shadow-lg:0 4px 16px rgba(0,0,0,.55),0 30px 70px rgba(0,0,0,.6);
     --nav:rgba(0,0,0,.65);
     --viz-bg:#161618;
+    --c-systems:#0A84FF; --c-quant:#30D158; --c-ai:#BF5AF2; --c-applied:#FF9F0A;
+    --glow-1:rgba(10,132,255,.22); --glow-2:rgba(64,200,224,.16); --glow-3:rgba(191,90,242,.16);
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
@@ -62,7 +66,16 @@
   @media(max-width:760px){.nav-links{display:none}.toggle{margin-left:auto}}
 
   /* hero */
-  .hero{padding:88px 0 26px;position:relative}
+  .hero{padding:66px 0 24px;position:relative;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:-10% -5% auto -5%;height:130%;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(52% 44% at 78% 18%,var(--glow-1),transparent 70%),
+      radial-gradient(46% 40% at 92% 60%,var(--glow-2),transparent 72%),
+      radial-gradient(40% 38% at 60% 8%,var(--glow-3),transparent 72%);
+    animation:drift 18s ease-in-out infinite alternate}
+  @keyframes drift{0%{transform:translate3d(0,0,0) scale(1)}100%{transform:translate3d(-2%,1.5%,0) scale(1.06)}}
+  .hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.08fr .92fr;gap:44px;align-items:center}
+  @media(max-width:840px){.hero-grid{grid-template-columns:1fr;gap:30px}}
   .status{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--muted);background:var(--surface);border:1px solid var(--hair);border-radius:100px;padding:7px 14px;box-shadow:var(--shadow-sm);margin-bottom:22px}
   .status .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(52,199,89,.55);animation:pulse 2.6s infinite}
   .status b{color:var(--text);font-weight:600}
@@ -81,8 +94,22 @@
   .btn.solid{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
   .btn.solid:hover{background:var(--accent-press)}
 
+  /* hero scope panel */
+  .scope-panel{position:relative;border-radius:calc(var(--r) + 4px);background:var(--surface);border:1px solid var(--hair);box-shadow:var(--shadow-lg);overflow:hidden;min-height:360px;display:flex;flex-direction:column}
+  .scope-head{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;border-bottom:1px solid var(--hair)}
+  .scope-head .t{font-family:var(--mono);font-size:11px;letter-spacing:.02em;color:var(--muted);text-transform:uppercase}
+  .scope-head .lights{display:flex;gap:6px}
+  .scope-head .lights i{width:9px;height:9px;border-radius:50%;display:block}
+  .scope-body{position:relative;flex:1;min-height:220px}
+  #scope{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .scope-foot{display:flex;align-items:baseline;justify-content:space-between;padding:14px 18px;border-top:1px solid var(--hair)}
+  .scope-foot .cap{font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.01em}
+  .scope-foot .val{font-family:var(--display);font-weight:600;font-size:16px;letter-spacing:-.02em}
+  .scope-foot .val .u{color:var(--accent);font-size:.72em}
+  @media(max-width:840px){.scope-panel{min-height:300px}.scope-body{min-height:180px}}
+
   /* stat card */
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);margin-top:44px;background:var(--surface);border:1px solid var(--hair);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);margin-top:40px;background:var(--surface);border:1px solid var(--hair);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;position:relative;z-index:1}
   .stat{padding:22px 20px;border-right:1px solid var(--hair)}
   .stat:last-child{border-right:0}
   .stat .k{font-family:var(--display);font-weight:600;font-size:clamp(24px,3vw,32px);letter-spacing:-.03em;line-height:1}
@@ -121,12 +148,19 @@
   html[data-theme="dark"] .seg button.on{background:#48484A}
 
   /* project grid */
-  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-  .card{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r);padding:24px;display:flex;flex-direction:column;box-shadow:var(--shadow-sm);transition:transform .35s cubic-bezier(.2,.7,.3,1),box-shadow .35s}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:940px){.grid{grid-template-columns:repeat(2,1fr)}}
+  .card{position:relative;background:var(--surface);border:1px solid var(--hair);border-radius:var(--r);padding:24px;display:flex;flex-direction:column;box-shadow:var(--shadow-sm);transition:transform .35s cubic-bezier(.2,.7,.3,1),box-shadow .35s;overflow:hidden}
+  .card[data-domain="systems"]{--dc:var(--c-systems)}
+  .card[data-domain="quant"]{--dc:var(--c-quant)}
+  .card[data-domain="ai"]{--dc:var(--c-ai)}
+  .card[data-domain="applied"]{--dc:var(--c-applied)}
+  .card::before{content:"";position:absolute;left:0;top:0;height:3px;width:100%;background:var(--dc);opacity:.85}
   .card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
   .card.flag-hidden{display:none}
-  .card-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
-  .p-domain{font-size:11px;letter-spacing:.01em;color:var(--faint);font-weight:600;text-transform:uppercase}
+  .card-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:4px}
+  .p-domain{font-size:10.5px;letter-spacing:.02em;color:var(--dc);font-weight:700;text-transform:uppercase;display:inline-flex;align-items:center;gap:6px}
+  .p-domain::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--dc)}
   .card h3{font-size:21px;margin:11px 0 0;font-weight:700;letter-spacing:-.025em}
   .card .p-tag{font-size:13px;margin-top:3px}
   .card p.desc{font-size:14.5px;color:var(--muted);margin:11px 0 0;line-height:1.5}
@@ -178,11 +212,30 @@
 <a id="top"></a>
 <header class="hero">
   <div class="wrap">
-    <div class="status"><span class="dot"></span> Currently — <b>Quantitative Developer, Blackwell Agentic AI</b></div>
-    <span class="eyebrow">Brandeis University · Computer Science · Class of 2028</span>
-    <h1>Keval Patel</h1>
-    <p class="hero-sub">I build systems that have to be <b>right</b>. Exactly-once engines proven under millions of simulated crashes, a healthcare platform for emerging markets, and quantitative tools measured in nanoseconds. The instinct underneath is always the same: <b>quantify the uncertainty, then prove the guarantee.</b> Where it fits, I build with an agentic-AI focus, wiring in the most capable agentic stack available at the time.</p>
-    <div class="olymp">South African Mathematics Olympiad · Top 10 nationally</div>
+    <div class="hero-grid">
+      <div class="hero-left">
+        <div class="status"><span class="dot"></span> Currently — <b>Quantitative Developer, Blackwell Agentic AI</b></div>
+        <span class="eyebrow">Brandeis University · Computer Science · Class of 2028</span>
+        <h1>Keval Patel</h1>
+        <p class="hero-sub">I build systems that have to be <b>right</b>. Exactly-once engines proven under millions of simulated crashes, a healthcare platform for emerging markets, and quantitative tools measured in nanoseconds. The instinct underneath is always the same: <b>quantify the uncertainty, then prove the guarantee.</b> Where it fits, I build with an agentic-AI focus, wiring in the most capable agentic stack available at the time.</p>
+        <div class="olymp">South African Mathematics Olympiad · Top 10 nationally</div>
+        <div class="hero-cta">
+          <a class="btn solid" href="#building">What I'm building</a>
+          <a class="btn" href="#work">All projects</a>
+          <a class="btn" href="https://github.com/K3val17" target="_blank" rel="noopener">GitHub</a>
+          <a class="btn" href="mailto:kevalpatel@brandeis.edu">Email</a>
+        </div>
+      </div>
+      <aside class="scope-panel" aria-hidden="true">
+        <div class="scope-head">
+          <span class="t">signal · measuring uncertainty</span>
+          <span class="lights"><i style="background:var(--red)"></i><i style="background:var(--orange)"></i><i style="background:var(--green)"></i></span>
+        </div>
+        <div class="scope-body"><canvas id="scope"></canvas></div>
+        <div class="scope-foot"><span class="cap">quantify → prove the guarantee</span><span class="val">0<span class="u"> err</span></span></div>
+      </aside>
+    </div>
+
     <div class="roles">
       <span class="role lead">Targeting</span>
       <span class="role">Software Engineering</span>
@@ -193,12 +246,6 @@
       <span class="role">Solutions Architect</span>
       <span class="role">Product Manager</span>
       <span class="role">Systems Engineering</span>
-    </div>
-    <div class="hero-cta">
-      <a class="btn solid" href="#building">What I'm building</a>
-      <a class="btn" href="#work">All projects</a>
-      <a class="btn" href="https://github.com/K3val17" target="_blank" rel="noopener">GitHub</a>
-      <a class="btn" href="mailto:kevalpatel@brandeis.edu">Email</a>
     </div>
 
     <div class="stats" id="stats">
@@ -423,6 +470,38 @@
 
   /* filter */
   document.getElementById('filters').addEventListener('click',function(ev){var b=ev.target.closest('button');if(!b)return;this.querySelectorAll('button').forEach(function(c){c.classList.remove('on')});b.classList.add('on');var f=b.getAttribute('data-f');document.querySelectorAll('#grid .card').forEach(function(c){c.classList.toggle('flag-hidden',f!=='all'&&c.getAttribute('data-domain')!==f);});});
+
+  /* hero oscilloscope */
+  (function(){
+    var cv=document.getElementById('scope');if(!cv)return;var ctx=cv.getContext('2d');var W,H,dpr;
+    function accent(){return root.getAttribute('data-theme')==='dark'?[10,132,255]:[0,113,227];}
+    function teal(){return root.getAttribute('data-theme')==='dark'?[64,200,224]:[48,176,199];}
+    function resize(){dpr=Math.min(2,window.devicePixelRatio||1);W=cv.clientWidth;H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
+    resize();window.addEventListener('resize',resize);
+    var t=0;
+    function frame(){
+      ctx.clearRect(0,0,W,H);var midY=H*0.5;var a=accent(),te=teal();
+      // faint grid
+      ctx.strokeStyle='rgba(120,120,128,.10)';ctx.lineWidth=.5;
+      for(var gy=1;gy<4;gy++){ctx.beginPath();ctx.moveTo(0,H*gy/4);ctx.lineTo(W,H*gy/4);ctx.stroke();}
+      for(var gx=1;gx<6;gx++){ctx.beginPath();ctx.moveTo(W*gx/6,0);ctx.lineTo(W*gx/6,H);ctx.stroke();}
+      // three phosphor traces
+      for(var layer=0;layer<3;layer++){
+        ctx.beginPath();var amp=(H*0.26-layer*H*0.06)*(1+0.12*Math.sin(t*0.6));
+        var col=layer===2?te:a;var op=[0.9,0.4,0.22][layer];
+        ctx.strokeStyle='rgba('+col[0]+','+col[1]+','+col[2]+','+op+')';ctx.lineWidth=layer===0?2:1.2;ctx.lineJoin='round';
+        for(var x=0;x<=W;x+=3){var xn=x/W;var y=midY+Math.sin(xn*9+t*(1.1+layer*0.2))*amp+Math.sin(xn*23+t*1.7)*amp*0.28+Math.sin(xn*3-t*0.5)*amp*0.5;if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+        ctx.stroke();
+      }
+      // leading dot
+      var lx=W*(0.5+0.5*Math.sin(t*0.35));var ly=midY+Math.sin((lx/W)*9+t*1.1)*H*0.26+Math.sin((lx/W)*23+t*1.7)*H*0.075+Math.sin((lx/W)*3-t*0.5)*H*0.13;
+      ctx.beginPath();ctx.arc(lx,ly,3,0,7);ctx.fillStyle='rgba('+a[0]+','+a[1]+','+a[2]+',1)';ctx.fill();
+      ctx.beginPath();ctx.arc(lx,ly,9,0,7);ctx.fillStyle='rgba('+a[0]+','+a[1]+','+a[2]+',.16)';ctx.fill();
+      t+=0.016;if(!reduce)requestAnimationFrame(frame);
+    }
+    if(reduce){var a=accent();ctx.strokeStyle='rgba('+a[0]+','+a[1]+','+a[2]+',.8)';ctx.lineWidth=2;ctx.beginPath();for(var x=0;x<=W;x+=3){var y=H*0.5+Math.sin(x/W*9)*H*0.24+Math.sin(x/W*23)*H*0.06;if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}ctx.stroke();}
+    else requestAnimationFrame(frame);
+  })();
 
   /* project mini-visuals (iOS palette) */
   var A='#0071E3',G='#34C759',R='#FF3B30',P='#AF52DE',T='#30B0C7',GR='rgba(120,120,128,.5)';
