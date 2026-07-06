@@ -12,7 +12,7 @@
     --text:#1D1D1F; --muted:#6E6E73; --faint:#86868B;
     --hair:#D9D9DE; --hair-2:#C7C7CC;
     --accent:#0071E3; --accent-press:#0058B9; --green:#34C759; --red:#FF3B30; --purple:#AF52DE; --teal:#30B0C7; --orange:#FF9500;
-    --c-systems:#0071E3; --c-quant:#34C759; --c-ai:#AF52DE; --c-applied:#FF9500;
+    --c-systems:#0071E3; --c-quant:#34C759; --c-ai:#AF52DE; --c-applied:#FF9500; --c-product:#5856D6;
     --chip:#EFEFF2; --chip-line:#E2E2E7;
     --shadow-sm:0 1px 2px rgba(0,0,0,.05),0 1px 1px rgba(0,0,0,.04);
     --shadow:0 2px 6px rgba(0,0,0,.05),0 12px 34px rgba(0,0,0,.06);
@@ -36,7 +36,7 @@
     --shadow-lg:0 4px 16px rgba(0,0,0,.55),0 30px 70px rgba(0,0,0,.6);
     --nav:rgba(0,0,0,.65);
     --viz-bg:#161618;
-    --c-systems:#0A84FF; --c-quant:#30D158; --c-ai:#BF5AF2; --c-applied:#FF9F0A;
+    --c-systems:#0A84FF; --c-quant:#30D158; --c-ai:#BF5AF2; --c-applied:#FF9F0A; --c-product:#5E5CE6;
     --glow-1:rgba(10,132,255,.22); --glow-2:rgba(64,200,224,.16); --glow-3:rgba(191,90,242,.16);
   }
   *{box-sizing:border-box}
@@ -48,6 +48,14 @@
   }
   a{color:inherit;text-decoration:none}
   ::selection{background:rgba(0,113,227,.18)}
+  /* whole-page ambient motion */
+  body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.7;
+    background:
+      radial-gradient(38% 30% at 15% 12%,var(--glow-1),transparent 70%),
+      radial-gradient(34% 30% at 85% 78%,var(--glow-3),transparent 72%),
+      radial-gradient(30% 26% at 60% 45%,var(--glow-2),transparent 72%);
+    background-size:200% 200%;animation:bgflow 26s ease-in-out infinite alternate}
+  @keyframes bgflow{0%{background-position:0% 0%}100%{background-position:100% 100%}}
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
   .mono{font-family:var(--mono)}
   h1,h2,h3{font-family:var(--display);margin:0;letter-spacing:-.022em;font-weight:600}
@@ -93,6 +101,16 @@
   .btn:hover{background:var(--surface-alt);transform:translateY(-1px)}
   .btn.solid{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
   .btn.solid:hover{background:var(--accent-press)}
+  .btn svg{width:16px;height:16px;flex:none}
+  .btn.gh{background:#1D1D1F;color:#fff;border-color:#1D1D1F;font-weight:600}
+  html[data-theme="dark"] .btn.gh{background:#F5F5F7;color:#000;border-color:#F5F5F7}
+  .btn.gh:hover{transform:translateY(-1px) scale(1.02);box-shadow:var(--shadow)}
+  .btn.email svg{width:15px;height:15px}
+  /* card github pill */
+  .gh-link{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--text)!important;
+    background:var(--chip);border:1px solid var(--chip-line);border-radius:100px;padding:5px 12px;transition:.2s}
+  .gh-link svg{width:14px;height:14px}
+  .gh-link:hover{background:var(--text);color:var(--bg)!important;border-color:var(--text);text-decoration:none!important;transform:translateY(-1px)}
 
   /* hero scope panel */
   .scope-panel{position:relative;border-radius:calc(var(--r) + 4px);background:var(--surface);border:1px solid var(--hair);box-shadow:var(--shadow-lg);overflow:hidden;min-height:360px;display:flex;flex-direction:column}
@@ -155,6 +173,7 @@
   .card[data-domain="quant"]{--dc:var(--c-quant)}
   .card[data-domain="ai"]{--dc:var(--c-ai)}
   .card[data-domain="applied"]{--dc:var(--c-applied)}
+  .card[data-domain="product"]{--dc:var(--c-product)}
   .card::before{content:"";position:absolute;left:0;top:0;height:3px;width:100%;background:var(--dc);opacity:.85}
   .card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
   .card.flag-hidden{display:none}
@@ -166,6 +185,10 @@
   .card p.desc{font-size:14.5px;color:var(--muted);margin:11px 0 0;line-height:1.5}
   .viz{margin:18px 0 4px;height:92px;width:100%;border-radius:12px;background:var(--viz-bg);position:relative;overflow:hidden;border:1px solid var(--hair)}
   .viz svg{display:block;width:100%;height:100%}
+  .viz::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.05) 48%,transparent 66%);
+    transform:translateX(-100%);animation:sheen 5.5s ease-in-out infinite}
+  @keyframes sheen{0%,55%{transform:translateX(-100%)}85%,100%{transform:translateX(100%)}}
   .viz .vlabel{position:absolute;top:8px;left:11px;font-family:var(--mono);font-size:9.5px;letter-spacing:.02em;color:var(--faint);text-transform:uppercase}
   .viz .vbig{position:absolute;bottom:8px;right:12px;font-family:var(--display);font-weight:600;font-size:14px;letter-spacing:-.02em}
   .viz .vbig .u{color:var(--accent);font-size:.74em}
@@ -198,6 +221,8 @@
 </head>
 <body>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="ghmark" viewBox="0 0 16 16"><path fill="currentColor" d="M8 .2A8 8 0 0 0 5.5 15.8c.4.07.55-.17.55-.38v-1.3c-2.2.48-2.67-1.06-2.67-1.06-.36-.92-.88-1.16-.88-1.16-.72-.49.05-.48.05-.48.8.06 1.22.82 1.22.82.71 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.75-.2-3.6-.88-3.6-3.9 0-.86.3-1.57.82-2.12-.08-.2-.36-1.01.08-2.1 0 0 .67-.22 2.2.8a7.6 7.6 0 0 1 4 0c1.52-1.02 2.19-.8 2.19-.8.44 1.09.16 1.9.08 2.1.51.55.82 1.26.82 2.12 0 3.03-1.85 3.7-3.61 3.9.29.24.54.72.54 1.45v2.15c0 .21.15.46.55.38A8 8 0 0 0 8 .2z"/></symbol></svg>
+
 <nav>
   <div class="nav-in">
     <a href="#top" class="logo">Keval Patel</a>
@@ -221,9 +246,9 @@
         <div class="olymp">South African Mathematics Olympiad · Top 10 nationally</div>
         <div class="hero-cta">
           <a class="btn solid" href="#building">What I'm building</a>
+          <a class="btn gh" href="https://github.com/K3val17" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 .2A8 8 0 0 0 5.5 15.8c.4.07.55-.17.55-.38v-1.3c-2.2.48-2.67-1.06-2.67-1.06-.36-.92-.88-1.16-.88-1.16-.72-.49.05-.48.05-.48.8.06 1.22.82 1.22.82.71 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.75-.2-3.6-.88-3.6-3.9 0-.86.3-1.57.82-2.12-.08-.2-.36-1.01.08-2.1 0 0 .67-.22 2.2.8a7.6 7.6 0 0 1 4 0c1.52-1.02 2.19-.8 2.19-.8.44 1.09.16 1.9.08 2.1.51.55.82 1.26.82 2.12 0 3.03-1.85 3.7-3.61 3.9.29.24.54.72.54 1.45v2.15c0 .21.15.46.55.38A8 8 0 0 0 8 .2z"/></svg>GitHub</a>
           <a class="btn" href="#work">All projects</a>
-          <a class="btn" href="https://github.com/K3val17" target="_blank" rel="noopener">GitHub</a>
-          <a class="btn" href="mailto:kevalpatel@brandeis.edu">Email</a>
+          <a class="btn email" href="mailto:kevalpatel@brandeis.edu"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="3" width="13" height="10" rx="2"/><path d="M2 4l6 4.5L14 4"/></svg>Email</a>
         </div>
       </div>
       <aside class="scope-panel" aria-hidden="true">
@@ -251,7 +276,7 @@
     <div class="stats" id="stats">
       <div class="stat"><div class="k" data-to="10">0</div><div class="l">Systems shipped</div></div>
       <div class="stat"><div class="k" data-to="560"><span class="u">+</span>0</div><div class="l">Tests written</div></div>
-      <div class="stat"><div class="k">4</div><div class="l">Domains</div></div>
+      <div class="stat"><div class="k">5</div><div class="l">Domains</div></div>
       <div class="stat"><div class="k">Rust · Py · Go</div><div class="l">Core stack</div></div>
     </div>
   </div>
@@ -314,6 +339,7 @@
       <button data-f="quant">Quant</button>
       <button data-f="ai">Agentic AI</button>
       <button data-f="applied">Applied</button>
+      <button data-f="product">Ventures</button>
     </div>
 
     <div class="grid" id="grid">
@@ -329,7 +355,7 @@
           <div class="metric"><div class="mv">0</div><div class="ml">core deps</div></div>
         </div>
         <div class="stack"><span>Rust</span><span>io_uring</span><span>WAL</span><span>SHA-256</span><span class="ai">agentic stack</span></div>
-        <div class="card-links"><a href="https://github.com/K3val17/onced" target="_blank" rel="noopener">GitHub</a><span class="ff">Apache-2.0 · public</span></div>
+        <div class="card-links"><a class="gh-link" href="https://github.com/K3val17/onced" target="_blank" rel="noopener"><svg viewBox="0 0 16 16"><use href="#ghmark"/></svg>GitHub</a><span class="ff">Apache-2.0 · public</span></div>
       </article>
 
       <article class="card rv" data-domain="ai">
@@ -343,21 +369,21 @@
           <div class="metric"><div class="mv">S&amp;P 100</div><div class="ml">live universe</div></div>
         </div>
         <div class="stack"><span>Python</span><span>Black-Litterman</span><span>MST graphs</span><span class="ai">Claude Code</span></div>
-        <div class="card-links"><a href="https://github.com/K3val17/orrery" target="_blank" rel="noopener">GitHub</a><span class="ff">public</span></div>
+        <div class="card-links"><a class="gh-link" href="https://github.com/K3val17/orrery" target="_blank" rel="noopener"><svg viewBox="0 0 16 16"><use href="#ghmark"/></svg>GitHub</a><span class="ff">public</span></div>
       </article>
 
       <article class="card rv" data-domain="quant">
-        <div class="card-top"><h3 style="margin:0">Sextant</h3><span class="p-domain">Quant · Rust + Py</span></div>
-        <div class="p-tag">autonomous algorithmic-trading engine</div>
-        <p class="desc">A paper-first trading engine: twelve alpha tools, six strategies, an event-driven backtester on free real data, and an execution core rewritten from O(n²) to O(n), 620× faster, brushing the language's throughput ceiling.</p>
-        <div class="viz" data-viz="equity"><span class="vlabel">backtest equity curve</span><span class="vbig">3.8 <span class="u">ns</span>/trade</span></div>
+        <div class="card-top"><h3 style="margin:0">Astrolabe</h3><span class="p-domain">Quant · Rust + Py</span></div>
+        <div class="p-tag">portfolio decision cockpit</div>
+        <p class="desc">A calibration-first cockpit for a personal portfolio. Transparent tools each attach a probability and a plain-English explanation to every opinion, a tracker grades past calls with a Brier score and calibration curve, and snapshots turn each refresh into free backtesting history. A Rust execution core sits underneath. It never places an order: you decide here, you trade in IBKR.</p>
+        <div class="viz" data-viz="equity"><span class="vlabel">calibration · signal history</span><span class="vbig">Brier<span class="u"> ↓</span></span></div>
         <div class="metrics">
-          <div class="metric"><div class="mv">620×</div><div class="ml">exec speedup</div></div>
-          <div class="metric"><div class="mv">11.3 M</div><div class="ml">fills/sec</div></div>
-          <div class="metric"><div class="mv">120</div><div class="ml">tests</div></div>
+          <div class="metric"><div class="mv">calibrated</div><div class="ml">every signal</div></div>
+          <div class="metric"><div class="mv">Rust</div><div class="ml">execution core</div></div>
+          <div class="metric"><div class="mv">Brier</div><div class="ml">scored</div></div>
         </div>
-        <div class="stack"><span>Rust</span><span>Python</span><span>event-driven</span><span class="ai">agentic stack</span></div>
-        <div class="card-links"><span class="ff">private · paper-trading</span></div>
+        <div class="stack"><span>Python</span><span>Rust</span><span>calibration</span><span class="ai">agentic stack</span></div>
+        <div class="card-links"><span class="ff">private · decision support</span></div>
       </article>
 
       <article class="card rv" data-domain="quant">
@@ -385,7 +411,7 @@
           <div class="metric"><div class="mv">dry-run</div><div class="ml">safe default</div></div>
         </div>
         <div class="stack"><span>Python</span><span>ports &amp; adapters</span><span>Kalshi API</span></div>
-        <div class="card-links"><a href="https://github.com/K3val17/deuce" target="_blank" rel="noopener">GitHub</a><span class="ff">public</span></div>
+        <div class="card-links"><a class="gh-link" href="https://github.com/K3val17/deuce" target="_blank" rel="noopener"><svg viewBox="0 0 16 16"><use href="#ghmark"/></svg>GitHub</a><span class="ff">public</span></div>
       </article>
 
       <article class="card rv" data-domain="quant">
@@ -399,35 +425,49 @@
           <div class="metric"><div class="mv">CRSP 1926+</div><div class="ml">via WRDS</div></div>
         </div>
         <div class="stack"><span>Python</span><span>Streamlit</span><span>FRED / EDGAR</span><span>IBKR API</span></div>
-        <div class="card-links"><a href="https://github.com/K3val17/market-dashboard" target="_blank" rel="noopener">GitHub</a><span class="ff">public</span></div>
+        <div class="card-links"><a class="gh-link" href="https://github.com/K3val17/market-dashboard" target="_blank" rel="noopener"><svg viewBox="0 0 16 16"><use href="#ghmark"/></svg>GitHub</a><span class="ff">public</span></div>
       </article>
 
       <article class="card rv" data-domain="applied">
-        <div class="card-top"><h3 style="margin:0">Avionics Fault Detection</h3><span class="p-domain">Applied · Python</span></div>
-        <div class="p-tag">sensor → anomaly → diagnosis</div>
-        <p class="desc">A vectorized ARINC-429 avionics-bus simulator with injectable faults and fault-propagation modelling, feeding a detection pipeline that turns a raw signal into a diagnosis. Streams millions of samples a second.</p>
+        <div class="card-top"><h3 style="margin:0">airops</h3><span class="p-domain">Applied · Python</span></div>
+        <div class="p-tag">aircraft fault detection + airport operations</div>
+        <p class="desc">Two operations systems, built test-first but architected like latency-critical software. A vectorized ARINC-429 telemetry simulator detects faults, localises them to a subsystem, and traces cascades to one root cause. A gate-and-flow scheduler pairs a CP-SAT solver with a reinforcement-learning policy to re-plan a full airport far faster than real time. All data synthetic, from documented simulators.</p>
         <div class="viz" data-viz="signal"><span class="vlabel">arinc-429 · fault injected</span><span class="vbig">7.8<span class="u">M</span>/s</span></div>
         <div class="metrics">
-          <div class="metric"><div class="mv">15–130×</div><div class="ml">speedup</div></div>
-          <div class="metric"><div class="mv">52</div><div class="ml">tests</div></div>
-          <div class="metric"><div class="mv">ARINC-429</div><div class="ml">bus model</div></div>
+          <div class="metric"><div class="mv">7.8 M/s</div><div class="ml">telemetry</div></div>
+          <div class="metric"><div class="mv">50,000×</div><div class="ml">real-time ops</div></div>
+          <div class="metric"><div class="mv">149</div><div class="ml">tests</div></div>
         </div>
-        <div class="stack"><span>Python</span><span>NumPy</span><span>ARINC-429</span><span>anomaly detection</span></div>
+        <div class="stack"><span>Python</span><span>NumPy</span><span>ARINC-429</span><span>CP-SAT</span><span>RL</span></div>
         <div class="card-links"><span class="ff">private · simulation</span></div>
       </article>
 
-      <article class="card rv" data-domain="applied">
-        <div class="card-top"><h3 style="margin:0">Airport-Ops Optimizer</h3><span class="p-domain">Applied / OR · Python</span></div>
-        <div class="p-tag">constraint solving + reinforcement learning</div>
-        <p class="desc">A gate-and-flow scheduler that pairs a CP-SAT constraint solver with a reinforcement-learning policy and a flow predictor. It re-plans a full airport's operations tens of thousands of times faster than real time.</p>
-        <div class="viz" data-viz="gantt"><span class="vlabel">gate schedule</span><span class="vbig">50<span class="u">k×</span> real-time</span></div>
+      <article class="card rv" data-domain="quant">
+        <div class="card-top"><h3 style="margin:0">Kalshi Edge</h3><span class="p-domain">Quant · Python</span></div>
+        <div class="p-tag">signal scanner + low-latency execution</div>
+        <p class="desc">Scans 100+ open Kalshi prediction markets for mispriced contracts across five signal strategies: orderbook imbalance, volume anomaly, midpoint edge, cross-platform arb, and spread capture. It ranks opportunities by edge size times confidence, tells you what to buy and why, and executes with minimal latency. Ships with an IPL cricket data server.</p>
+        <div class="viz" data-viz="prob"><span class="vlabel">edge · signal scan</span><span class="vbig">5<span class="u"> signals</span></span></div>
         <div class="metrics">
-          <div class="metric"><div class="mv">CP-SAT</div><div class="ml">+ RL policy</div></div>
-          <div class="metric"><div class="mv">97</div><div class="ml">tests</div></div>
-          <div class="metric"><div class="mv">50,000×</div><div class="ml">real-time</div></div>
+          <div class="metric"><div class="mv">100+</div><div class="ml">markets scanned</div></div>
+          <div class="metric"><div class="mv">5</div><div class="ml">signal strategies</div></div>
+          <div class="metric"><div class="mv">MCP</div><div class="ml">cricket server</div></div>
         </div>
-        <div class="stack"><span>Python</span><span>OR-Tools</span><span>reinforcement learning</span></div>
-        <div class="card-links"><span class="ff">private · optimization</span></div>
+        <div class="stack"><span>Python</span><span>Kalshi API</span><span>signals</span><span>MCP</span></div>
+        <div class="card-links"><a class="gh-link" href="https://github.com/K3val17/kalshi-edge" target="_blank" rel="noopener"><svg viewBox="0 0 16 16"><use href="#ghmark"/></svg>GitHub</a><span class="ff">public</span></div>
+      </article>
+
+      <article class="card rv" data-domain="product">
+        <div class="card-top"><h3 style="margin:0">SA Ventures</h3><span class="p-domain">Product · Full-stack</span></div>
+        <div class="p-tag">three product MVPs for South-African markets</div>
+        <p class="desc">One thesis, three products: the consented-data and open-API layer the US takes for granted and South Africa still lacks. Indlela is a verified graduate careers network, Sonke Health is a patient-owned FHIR records exchange with real consent scopes and a hash-chained audit log, and Imali is consumer account aggregation and credit clarity. Each is a self-contained build with its own visual identity.</p>
+        <div class="viz" data-viz="mst"><span class="vlabel">three products · one data layer</span></div>
+        <div class="metrics">
+          <div class="metric"><div class="mv">3</div><div class="ml">product MVPs</div></div>
+          <div class="metric"><div class="mv">FHIR</div><div class="ml">Sonke backend</div></div>
+          <div class="metric"><div class="mv">consent</div><div class="ml">scoped access</div></div>
+        </div>
+        <div class="stack"><span>Node</span><span>FHIR</span><span>SHA-256 audit</span><span>full-stack</span></div>
+        <div class="card-links"><span class="ff">private · venture</span></div>
       </article>
 
     </div>
