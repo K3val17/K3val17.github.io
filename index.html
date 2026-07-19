@@ -99,6 +99,23 @@
   .thesis p .hl{color:var(--gold)}
   .thesis p .un{color:var(--cyan-lit)}
 
+  /* current role panel */
+  .current{padding:34px 0 0}
+  .current-panel{border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,var(--panel-2),var(--panel));
+    position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:0}
+  .current-panel::before{content:"";position:absolute;left:0;top:0;height:100%;width:3px;background:linear-gradient(180deg,var(--gold),transparent)}
+  .cp-left{padding:26px 26px 26px 30px;border-right:1px solid var(--line);display:flex;flex-direction:column;justify-content:center}
+  .cp-kicker{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;letter-spacing:.02em;color:var(--green);margin-bottom:12px}
+  .cp-left h3{font-size:26px;letter-spacing:-.02em}
+  .cp-role{font-family:var(--mono);font-size:13px;color:var(--gold);margin-top:6px;font-weight:500}
+  .cp-meta{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin-top:10px}
+  .cp-right{padding:26px 30px 26px 26px}
+  .cp-right p{font-size:15px;color:var(--muted);line-height:1.6;margin:0}
+  .cp-right p b{color:var(--text);font-weight:500}
+  .cp-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:16px}
+  .cp-tags span{font-family:var(--mono);font-size:11px;color:var(--muted);background:rgba(140,160,185,.06);border:1px solid var(--line);border-radius:100px;padding:4px 11px}
+  @media(max-width:760px){.current-panel{grid-template-columns:1fr}.cp-left{border-right:0;border-bottom:1px solid var(--line);text-align:left}}
+
   /* featured */
   .feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
   .feat{border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,var(--panel-2),var(--panel));padding:26px;position:relative;overflow:hidden;transition:.35s cubic-bezier(.2,.7,.3,1)}
@@ -212,13 +229,13 @@
     <div class="roles">
       <span class="role lead">Targeting</span>
       <span class="role">Trading</span>
+      <span class="role">Sales &amp; Trading</span>
+      <span class="role">Strategy &amp; Product</span>
+      <span class="role">Operations</span>
       <span class="role">Quantitative Research</span>
       <span class="role">Quantitative Developer</span>
-      <span class="role">Quantitative Analyst</span>
-      <span class="role">Software Engineering</span>
-      <span class="role">Founding Engineer</span>
-      <span class="role">Forward Deployed Engineer</span>
       <span class="role">ML Engineering</span>
+      <span class="role">Software Engineering</span>
       <span class="role">Systems Engineering</span>
     </div>
     <div class="hero-cta">
@@ -242,6 +259,24 @@
 <div class="wrap thesis rv">
   <p>Projects across <span class="un">distributed systems</span>, <span class="un">quantitative finance</span>, <span class="un">agentic AI</span>, <span class="un">applied math</span>, and <span class="un">product</span>. Different domains, one method: measure what is uncertain, then <span class="hl">build the proof it holds under fault.</span></p>
 </div>
+
+<!-- ============ CURRENT ROLE ============ -->
+<section class="current">
+  <div class="wrap">
+    <div class="current-panel rv">
+      <div class="cp-left">
+        <span class="cp-kicker"><span class="dot"></span> Current role</span>
+        <h3>Turion Quant</h3>
+        <div class="cp-role">Quantitative Trading</div>
+        <div class="cp-meta">Systematic trading · 2026</div>
+      </div>
+      <div class="cp-right">
+        <p>I work in <b>quantitative trading</b> at Turion Quant, across the research-to-execution stack. That means <b>strategy research and backtesting</b>, and the <b>reliability and automation engineering</b> that keeps a live systematic trading system correct, reproducible, and fast. My focus is turning research ideas into robust, testable trading infrastructure, and using agentic tooling to tighten the loop from idea to validated signal.</p>
+        <div class="cp-tags"><span>quantitative trading</span><span>strategy research</span><span>backtesting</span><span>trading infrastructure</span><span>reliability engineering</span><span>agentic tooling</span></div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- ============ BUILDING NOW ============ -->
 <section id="building">
