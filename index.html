@@ -28,7 +28,9 @@
     font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;
   }
   /* cursor-interactive background field, sits behind all content */
-  #field{position:fixed;inset:0;width:100vw;height:100vh;z-index:-1;pointer-events:none;background:#000;display:block}
+  #field{position:fixed;inset:0;width:100vw;height:100vh;z-index:-2;pointer-events:none;background:#000;display:block}
+  .bg-scrim{position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,0) 0%,rgba(0,0,0,.76) 12%,rgba(0,0,0,.76) 88%,rgba(0,0,0,0) 100%)}
+  header.hero{text-shadow:0 2px 16px rgba(0,0,0,.92)}
   a{color:inherit;text-decoration:none}
   ::selection{background:rgba(232,178,58,.25);color:#fff}
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
@@ -204,6 +206,7 @@
 <body>
 
 <canvas id="field" aria-hidden="true"></canvas>
+<div class="bg-scrim" aria-hidden="true"></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="ghmark" viewBox="0 0 16 16"><path fill="currentColor" d="M8 .2A8 8 0 0 0 5.5 15.8c.4.07.55-.17.55-.38v-1.3c-2.2.48-2.67-1.06-2.67-1.06-.36-.92-.88-1.16-.88-1.16-.72-.49.05-.48.05-.48.8.06 1.22.82 1.22.82.71 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.75-.2-3.6-.88-3.6-3.9 0-.86.3-1.57.82-2.12-.08-.2-.36-1.01.08-2.1 0 0 .67-.22 2.2.8a7.6 7.6 0 0 1 4 0c1.52-1.02 2.19-.8 2.19-.8.44 1.09.16 1.9.08 2.1.51.55.82 1.26.82 2.12 0 3.03-1.85 3.7-3.61 3.9.29.24.54.72.54 1.45v2.15c0 .21.15.46.55.38A8 8 0 0 0 8 .2z"/></symbol></svg>
 
@@ -563,171 +566,79 @@
 </script>
 
 <script>
-/* Cursor-interactive background field. A perspective height-field of points that
-   holds a slow standing swell at rest and lifts/ripples toward the pointer.
-   Adapted from the turion-site field; dark, black-ground, single palette. */
+/* Cursor-gravity background field. Vertical strands of points that fold inward
+   toward the pointer, which becomes the center of gravity. Black ground. */
 (function(){
   "use strict";
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var BG = [0,0,0];                 // pure black ground
-  var TG = [232,178,58];            // portfolio gold, for the orbital rings
-  function G(a){ return "rgba(" + TG[0] + "," + TG[1] + "," + TG[2] + "," + a + ")"; }
+  var cvs = document.getElementById("field"); if(!cvs) return;
+  var ctx = cvs.getContext("2d");
+  var W,H,dpr,GAPX,GAPY,NX,NY;
+  var mx=0,my=0,on=false, cmx=0,cmy=0,cw=0;
+  var GOLD="232,178,58";
+  var STR=0.64;                          // max fold: fraction of the way to the cursor
+  var t0=performance.now(), running=true, raf=0;
 
-  var cvs = document.getElementById("field");
-  if (!cvs) return;
-  var ctx = cvs.getContext("2d", { alpha:false });
-
-  var NX = 224, NZ = 96;            // lattice resolution
-  var SPAN = 0.64, AMP = 0.20;      // field half-width / crest amplitude (screen widths)
-  var Z0 = 0.52, Z1 = 12.0;         // near / far depth
-  var PAR = 0.045, CAM_Y = 0.52;    // cursor parallax / camera height
-  var buf, imgW, imgH, dpr, focal, cx, cy;
-  var ripples = [];
-  var cur = { u:0, z:1.6, on:false };
-  var cam = { u:0, z:1.6, w:0 };
-  var travel = 0, SB = 0;
-  var t0 = performance.now(), running = true, rafId = 0;
-
-  function resize(){
-    var w = cvs.clientWidth, h = cvs.clientHeight;
-    dpr = Math.min(devicePixelRatio || 1, 1.5);
-    var scale = w < 700 ? 0.6 : 0.75;
-    imgW = Math.max(1, Math.round(w * dpr * scale));
-    imgH = Math.max(1, Math.round(h * dpr * scale));
-    cvs.width = imgW; cvs.height = imgH;
-    buf = ctx.createImageData(imgW, imgH);
-    focal = imgW * 0.60; cx = imgW * 0.5; cy = imgH * 0.02;
-  }
-
-  function swell(u, z, t){
-    var zc = 0.62 + u * 0.22;
-    var envZ = Math.exp(-(z - zc) * (z - zc) * 2.7);
-    var envU = 0.30 + 0.70 * Math.exp(-u * u * 2.6);
-    var env = envZ * envU;
-    var wave = 0.55 * Math.sin(u * 7.4 - t * 0.52) + 0.45 * Math.sin(u * 3.6 + z * 1.75 + t * 0.31);
-    var base = 0.075 * Math.sin(u * 5.5 + t * 0.34) + 0.060 * Math.sin(z * 2.1 - t * 0.27);
-    var h = env * (0.82 + 0.30 * wave) + base * (1 - env * 0.55);
-    SB = h;
-    if (cam.w > 0.001){
-      var cu = (u - cam.u) * 1.5, cz = (z - cam.z) * 0.85;
-      var cd2 = cu * cu + cz * cz, cd = Math.sqrt(cd2);
-      h += cam.w * 0.62 * Math.exp(-cd2 * 26);                                 // lift under pointer
-      h += cam.w * 0.20 * Math.exp(-cd2 * 3.0) * Math.cos(cd * 16 - t * 4.5);  // concentric rings
-      h += cam.w * cam.u * u * 0.16;                                           // whole-sheet lean
-    }
-    for (var i = 0; i < ripples.length; i++){
-      var r = ripples[i];
-      var du = (u - r.x) * 1.6, dz = z - r.z;
-      var dist = Math.sqrt(du*du + dz*dz), age = t - r.t, band = dist - age * 1.05;
-      h += r.amp * Math.exp(-band * band * 42) * Math.exp(-age * 1.5);
-    }
-    return h;
-  }
-
-  function ink(d, i, r, g, b, f){
-    var v0 = d[i] + r * f, v1 = d[i+1] + g * f, v2 = d[i+2] + b * f;
-    d[i]   = v0 > 255 ? 255 : v0;
-    d[i+1] = v1 > 255 ? 255 : v1;
-    d[i+2] = v2 > 255 ? 255 : v2;
-  }
-  function splat(px, py, r, g, b, a){
-    if (px < 1 || py < 1 || px >= imgW - 1 || py >= imgH - 1) return;
-    var d = buf.data, i = ((py|0) * imgW + (px|0)) * 4;
-    ink(d, i, r, g, b, a);
-    if (a > 0.62){
-      var s = (a - 0.62) * 0.85, n = [i-4, i+4, i-imgW*4, i+imgW*4];
-      for (var k = 0; k < 4; k++){ var j = n[k]; if (j < 0 || j >= d.length) continue; ink(d, j, r, g, b, s); }
-    }
+  function build(){
+    W=innerWidth; H=innerHeight;
+    dpr=Math.min(2, devicePixelRatio||1);
+    cvs.width=W*dpr; cvs.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    GAPX = W<700 ? 30 : 38;              // wide horizontal spacing
+    GAPY = W<700 ? 20 : 22;              // tighter vertical spacing -> reads as vertical strands
+    NX=Math.ceil(W/GAPX)+2; NY=Math.ceil(H/GAPY)+2;
+    if(cmx===0){ cmx=W/2; cmy=H*0.42; }
   }
 
   function frame(now){
-    var t = (now - t0) / 1000;
-    for (var q = ripples.length - 1; q >= 0; q--) if (t - ripples[q].t > 3.2) ripples.splice(q, 1);
-    var d = buf.data;
-    for (var i = 0; i < d.length; i += 4){ d[i]=BG[0]; d[i+1]=BG[1]; d[i+2]=BG[2]; d[i+3]=255; }
+    var t=(now-t0)/1000;
+    ctx.fillStyle="#000"; ctx.fillRect(0,0,W,H);
+    if(on){ cmx+=(mx-cmx)*0.16; cmy+=(my-cmy)*0.16; }
+    cw += ((on?1:0)-cw)*0.05;
+    var sigma=Math.min(W,H)*0.34, inv2s2=1/(2*sigma*sigma);
+    var HX=1.9;                          // >1 -> the gravity well is taller than it is wide
 
-    var maxScroll = Math.max(1, document.body.scrollHeight - innerHeight);
-    var sp = Math.min(1, Math.max(0, scrollY / maxScroll));
-    travel += (sp * 2.4 - travel) * 0.08;
-    var dim = 1 - sp * 0.28;
-
-    cam.u += (cur.u - cam.u) * 0.20;
-    cam.z += (cur.z - cam.z) * 0.20;
-    cam.w += ((cur.on ? 1 : 0) - cam.w) * 0.07;
-    var par = cam.u * PAR;
-
-    var iNear = 1 / Z0, iFar = 1 / Z1;
-    for (var iz = 0; iz < NZ; iz++){
-      var vz = iz / (NZ - 1);
-      var invz = iFar + vz * (iNear - iFar);
-      var z = 1 / invz + travel;
-      var fog = 0.72 + 0.28 * ((invz - iFar) / (iNear - iFar));
-      for (var ix = 0; ix < NX; ix++){
-        var u = (ix / (NX - 1) - 0.5) * 2 * SPAN;
-        var h = swell(u, z, t);
-        var sx = cx + (u + par / z) * imgW;
-        var sy = cy + (CAM_Y / z - AMP * h) * focal;
-        if (sx < 0 || sy < 0 || sx >= imgW || sy >= imgH) continue;
-        var hb = SB + (h - SB) * 0.30;
-        var e = Math.max(0, Math.min(1, (hb + 0.06) / 0.82));
-        var inten = (Math.pow(e, 2.4) * 1.35 + 0.085) * fog * dim;
-        if (inten < 0.004) continue;
-        var r, g, b;
-        if (e < 0.42){ var k = e / 0.42; r = 120 + 100 * k; g = 42 + 70 * k; b = 14 + 20 * k; }        // embers
-        else if (e < 0.78){ var k2 = (e - 0.42) / 0.36; r = 220 + 30 * k2; g = 112 + 62 * k2; b = 34 + 42 * k2; } // amber body
-        else { var k3 = (e - 0.78) / 0.22; r = 250; g = 174 + 70 * k3; b = 76 + 150 * k3; }             // hot crest
-        splat(sx, sy, r, g, b, Math.min(1, inten * 1.55));
+    for(var ix=0; ix<NX; ix++){
+      var bx=ix*GAPX, sway=Math.sin(t*0.45+ix*0.5)*5;
+      var pts=[]; ctx.beginPath();
+      for(var iy=0; iy<NY; iy++){
+        var px=bx+sway, py=iy*GAPY + Math.sin(t*0.5+ix*0.3+iy*0.25)*2.2;
+        var dx=cmx-px, dy=cmy-py;
+        var d2=(dx*HX)*(dx*HX)+dy*dy;
+        var pull=cw*STR*Math.exp(-d2*inv2s2);   // fold toward cursor, gaussian falloff
+        px+=pull*dx; py+=pull*dy;
+        pts.push(px,py,pull);
+        if(iy===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
       }
+      ctx.strokeStyle="rgba("+GOLD+",0.10)"; ctx.lineWidth=1; ctx.stroke();   // the folding strand
+      for(var k=0;k<pts.length;k+=3){
+        var e=pts[k+2]/STR;                    // 0..1 nearness to the well
+        ctx.globalAlpha=0.09+0.82*e;
+        var sz=1.3+2.4*e;
+        ctx.fillStyle="rgba("+GOLD+",1)";
+        ctx.fillRect(pts[k]-sz/2, pts[k+1]-sz/2, sz, sz);
+      }
+      ctx.globalAlpha=1;
     }
-    ctx.putImageData(buf, 0, 0);
-
-    ctx.save();
-    ctx.globalCompositeOperation = "lighter";
-    ctx.lineWidth = Math.max(1, dpr * 0.75);
-    var ringCx = cx, ringCy = cy + (CAM_Y / (1.62 + travel) - AMP * 0.42) * focal;
-    for (var rr = 0; rr < 3; rr++){
-      var rad = imgW * (0.17 + rr * 0.135);
-      ctx.beginPath();
-      ctx.setLineDash(rr === 1 ? [2 * dpr, 7 * dpr] : []);
-      ctx.strokeStyle = G(0.11 - rr * 0.028);
-      ctx.ellipse(ringCx, ringCy, rad, rad * (0.94 + 0.02 * Math.sin(t * 0.2 + rr)), 0, 0, Math.PI * 2);
-      ctx.stroke();
+    if(cw>0.02){                               // bright core at the center of gravity
+      var g=ctx.createRadialGradient(cmx,cmy,0,cmx,cmy,110);
+      g.addColorStop(0,"rgba("+GOLD+","+(0.22*cw)+")");
+      g.addColorStop(1,"rgba("+GOLD+",0)");
+      ctx.fillStyle=g; ctx.fillRect(cmx-110,cmy-110,220,220);
     }
-    ctx.restore();
-
-    if (running) rafId = requestAnimationFrame(frame);
+    if(running) raf=requestAnimationFrame(frame);
   }
 
-  function screenToField(clientX, clientY){
-    var sx = clientX / innerWidth * imgW, sy = clientY / innerHeight * imgH;
-    var dy = Math.max(6, sy - cy);
-    var z = Math.max(Z0, Math.min(Z1 + travel, focal * CAM_Y / dy));
-    return { u: (sx - cx) / imgW, z: z };
-  }
-  var lastRipple = 0;
-  function pointerMove(e){
-    var p = screenToField(e.clientX, e.clientY);
-    cur.u = p.u; cur.z = p.z; cur.on = true;
-    var now = (performance.now() - t0) / 1000;
-    if (now - lastRipple > 0.09){ lastRipple = now; ripples.push({ x:p.u, z:p.z, t:now, amp:0.26 }); if (ripples.length > 24) ripples.shift(); }
-  }
-  function pointerDown(e){
-    var p = screenToField(e.clientX, e.clientY);
-    ripples.push({ x:p.u, z:p.z, t:(performance.now() - t0) / 1000, amp:0.70 });
-  }
-
-  resize();
-  addEventListener("resize", function(){ resize(); if (reduce) frame(performance.now()); });
-  if (reduce){
-    frame(performance.now());
-  } else {
-    addEventListener("pointermove", pointerMove, { passive:true });
-    addEventListener("pointerdown", pointerDown, { passive:true });
-    addEventListener("pointerleave", function(){ cur.on = false; }, { passive:true });
-    rafId = requestAnimationFrame(frame);
+  function move(e){ mx=e.clientX; my=e.clientY; on=true; }
+  build(); addEventListener("resize", build);
+  if(reduce){ frame(performance.now()); }
+  else{
+    addEventListener("pointermove", move, {passive:true});
+    addEventListener("pointerdown", move, {passive:true});
+    addEventListener("pointerleave", function(){ on=false; }, {passive:true});
+    raf=requestAnimationFrame(frame);
     document.addEventListener("visibilitychange", function(){
-      if (document.hidden){ running = false; cancelAnimationFrame(rafId); }
-      else if (!running){ running = true; t0 = performance.now() - 1000; rafId = requestAnimationFrame(frame); }
+      if(document.hidden){ running=false; cancelAnimationFrame(raf); }
+      else if(!running){ running=true; raf=requestAnimationFrame(frame); }
     });
   }
 })();
