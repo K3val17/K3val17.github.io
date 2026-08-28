@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Keval Patel</title>
-<meta name="description" content="Keval Patel builds systems meant to be provably correct: an open-source exactly-once engine, a healthcare data platform for emerging markets, agentic research and trading tools." />
+<meta name="description" content="Keval Patel is a software engineer building systems meant to be provably correct: an open-source exactly-once engine, a healthcare data platform for emerging markets, agentic research and trading tools. Rust, C/C++, Python, Java, JavaScript, SQL, and AI-assisted development with Claude Code." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -108,6 +108,8 @@
   .cp-left{padding:26px 26px 26px 30px;border-right:1px solid var(--line);display:flex;flex-direction:column;justify-content:center}
   .cp-kicker{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;letter-spacing:.02em;color:var(--green);margin-bottom:12px}
   .cp-left h3{font-size:26px;letter-spacing:-.02em}
+  .cp-left h3 a{border-bottom:1px solid rgba(232,178,58,.35);transition:border-color .2s}
+  .cp-left h3 a:hover{border-bottom-color:var(--gold)}
   .cp-role{font-family:var(--mono);font-size:13px;color:var(--gold);margin-top:6px;font-weight:500}
   .cp-meta{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin-top:10px}
   .cp-right{padding:26px 30px 26px 26px}
@@ -169,6 +171,12 @@
   .metrics{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px}
   .metric .mv{font-family:var(--display);font-weight:600;font-size:17px;color:var(--text)}
   .metric .ml{font-family:var(--mono);font-size:10px;letter-spacing:.02em;color:var(--faint);margin-top:2px}
+  .toolgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:26px 46px;max-width:900px;margin:0 auto}
+  .toolcat .h{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:10px}
+  .toolcat .tags{display:flex;gap:7px;flex-wrap:wrap}
+  .toolcat .tags span{font-family:var(--mono);font-size:11px;color:var(--muted);background:rgba(140,160,185,.06);border:1px solid var(--line);border-radius:100px;padding:4px 11px}
+  .toolcat .tags span.ai{color:var(--gold);border-color:var(--gold-dim)}
+  @media(max-width:760px){.toolgrid{grid-template-columns:1fr;gap:22px}}
   .stack{display:flex;gap:6px;flex-wrap:wrap;margin-top:16px}
   .stack span{font-family:var(--mono);font-size:11px;color:var(--muted);background:rgba(140,160,185,.06);border:1px solid var(--line);
     border-radius:5px;padding:3px 8px}
@@ -214,7 +222,7 @@
   <div class="nav-in">
     <a href="#top" class="logo">K<b>P</b> · <span style="color:var(--muted);font-weight:400">Keval Patel</span></a>
     <div class="nav-links">
-      <a href="#building">Building now</a><a href="#work">Projects</a>
+      <a href="#building">Building now</a><a href="#work">Projects</a><a href="#tooling">Tooling</a>
       <a href="https://github.com/K3val17" target="_blank" rel="noopener">GitHub ↗</a>
     </div>
     <div class="status-nav"><span class="dot"></span> open · SA 2027</div>
@@ -224,22 +232,22 @@
 <a id="top"></a>
 <header class="hero">
   <div class="wrap hero-in">
-    <div class="status"><span class="dot"></span> Currently · <b>Quantitative Developer, Turion Quant</b></div>
+    <div class="status"><span class="dot"></span> Currently · <b>Quantitative Developer, Turrix Systems Research</b></div>
     <div class="eyebrow">Computer Science × Brandeis University · Class of 2028</div>
     <h1 id="hname"></h1>
     <p class="hero-sub">I build systems that have to be <b>right</b>. Exactly-once engines proven under millions of simulated crashes, a healthcare platform for emerging markets, agentic research brains, and quantitative tools measured in nanoseconds. The instinct underneath is always the same: <b>quantify the uncertainty, then prove the guarantee.</b> Where it fits, I build with an agentic-AI focus, wiring in the most capable agentic stack available at the time.</p>
     <div class="olymp">South African Mathematics Olympiad · Top 10 nationally</div>
     <div class="roles">
       <span class="role lead">Targeting</span>
+      <span class="role">Software Engineering</span>
+      <span class="role">Systems Engineering</span>
+      <span class="role">ML Engineering</span>
+      <span class="role">Quantitative Developer</span>
+      <span class="role">Quantitative Research</span>
       <span class="role">Product Manager</span>
       <span class="role">Technical Program Manager</span>
       <span class="role">Strategy &amp; Product</span>
       <span class="role">Operations</span>
-      <span class="role">Quantitative Research</span>
-      <span class="role">Quantitative Developer</span>
-      <span class="role">ML Engineering</span>
-      <span class="role">Software Engineering</span>
-      <span class="role">Systems Engineering</span>
     </div>
     <div class="hero-cta">
       <a class="btn solid" href="#building">▸ What I'm building</a>
@@ -269,12 +277,12 @@
     <div class="current-panel rv">
       <div class="cp-left">
         <span class="cp-kicker"><span class="dot"></span> Current role</span>
-        <h3>Turion Quant</h3>
+        <h3><a href="https://turrixsr.com" target="_blank" rel="noopener">Turrix Systems Research</a></h3>
         <div class="cp-role">Quantitative Trading</div>
         <div class="cp-meta">Systematic trading · 2026</div>
       </div>
       <div class="cp-right">
-        <p>I work in <b>quantitative trading</b> at Turion Quant, across the research-to-execution stack. That means <b>strategy research and backtesting</b>, and the <b>reliability and automation engineering</b> that keeps a live systematic trading system correct, reproducible, and fast. My focus is turning research ideas into robust, testable trading infrastructure, and using agentic tooling to tighten the loop from idea to validated signal.</p>
+        <p>I work in <b>quantitative trading</b> at Turrix Systems Research, across the research-to-execution stack. That means <b>strategy research and backtesting</b>, and the <b>reliability and automation engineering</b> that keeps a live systematic trading system correct, reproducible, and fast. My focus is turning research ideas into robust, testable trading infrastructure, and using agentic tooling to tighten the loop from idea to validated signal.</p>
         <div class="cp-tags"><span>quantitative trading</span><span>strategy research</span><span>backtesting</span><span>trading infrastructure</span><span>reliability engineering</span><span>agentic tooling</span></div>
       </div>
     </div>
@@ -487,6 +495,37 @@
         <div class="card-links"><span class="ff">private · venture</span></div>
       </article>
 
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider"></div></div>
+
+<!-- ============ TOOLING ============ -->
+<section id="tooling">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="sec-idx">03 &middot; Tooling</span>
+      <h2>What I build with</h2>
+      <div class="note">Languages and tools I have shipped real systems in.</div>
+    </div>
+    <div class="toolgrid rv">
+      <div class="toolcat">
+        <div class="h">Languages</div>
+        <div class="tags"><span>Rust</span><span>C / C++</span><span>Python</span><span>Go</span><span>Java</span><span>JavaScript</span><span>SQL</span></div>
+      </div>
+      <div class="toolcat">
+        <div class="h">AI-Assisted Engineering</div>
+        <div class="tags"><span class="ai">Claude Code</span><span class="ai">agent orchestration</span><span class="ai">MCP servers</span><span class="ai">prompt engineering</span><span class="ai">LLM code review</span></div>
+      </div>
+      <div class="toolcat">
+        <div class="h">Web &amp; Data</div>
+        <div class="tags"><span>HTML / CSS</span><span>React</span><span>Svelte</span><span>Node</span><span>REST APIs</span><span>PostgreSQL</span><span>Redis</span></div>
+      </div>
+      <div class="toolcat">
+        <div class="h">Fundamentals</div>
+        <div class="tags"><span>data structures &amp; algorithms</span><span>object-oriented design</span><span>relational databases</span><span>operating systems</span><span>test-driven development</span><span>telemetry &amp; p99 metrics</span></div>
+      </div>
     </div>
   </div>
 </section>
