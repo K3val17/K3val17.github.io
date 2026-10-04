@@ -355,19 +355,23 @@
       $('#feedState').textContent='add key';
     });
   }
+  var lastCx=null, lastFx=null;
   function refreshCx(){
-    cgPrices(CX.map(function(c){return c[0];})).then(function(d){
+    return cgPrices(CX.map(function(c){return c[0];})).then(function(d){
+      lastCx=d;
       $('#wCx').innerHTML=CX.map(function(c){var x=d[c[0]];if(!x)return rowHtml(c[1],'','--','--');
         return rowHtml(c[1],'USD','$'+nf(x.usd,x.usd<10?3:0),x.usd_24h_change);}).join('');
-      bindRows('#wCx','crypto');
+      bindRows('#wCx','crypto');buildTape();
     }).catch(function(){});
   }
   function refreshFx(){
-    fxLatest(FXL).then(function(d){
+    return fxLatest(FXL).then(function(d){
+      lastFx=d.rates;
       $('#wFx').innerHTML=FXL.map(function(s){return rowHtml('USD/'+s,'',nf(d.rates[s],4),'--');}).join('');
       document.querySelectorAll('#wFx .row').forEach(function(el){el.addEventListener('click',function(){
         $('#typeSeg').querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.t==='fx');});
         load('fx', el.dataset.sym.replace('USD/',''));});});
+      buildTape();
     }).catch(function(){});
   }
   function bindRows(sel,type){
@@ -378,19 +382,22 @@
     });});
   }
 
-  /* ---- ticker tape ---- */
-  function refreshTape(){
+  /* ---- ticker tape (built from already-fetched crypto + fx, no extra calls) ---- */
+  function buildTape(){
     var parts=[];
-    cgPrices(['bitcoin','ethereum']).then(function(d){
-      parts.push(['BTC','$'+nf(d.bitcoin.usd,0),d.bitcoin.usd_24h_change]);
-      parts.push(['ETH','$'+nf(d.ethereum.usd,0),d.ethereum.usd_24h_change]);
-      return fxLatest(['EUR','GBP','JPY']);
-    }).then(function(d){
-      parts.push(['EUR/USD',nf(1/d.rates.EUR,4),null]);
-      parts.push(['USD/JPY',nf(d.rates.JPY,2),null]);
-      var html=parts.map(function(p){return '<span class="tk"><b>'+p[0]+'</b>'+p[1]+(p[2]!=null?' <span class="'+cls(p[2])+'">'+pct(p[2])+'</span>':'')+'</span>';}).join('');
-      $('#tape').innerHTML=html+html; // duplicate for seamless scroll
-    }).catch(function(){});
+    if(lastCx){
+      if(lastCx.bitcoin)parts.push(['BTC','$'+nf(lastCx.bitcoin.usd,0),lastCx.bitcoin.usd_24h_change]);
+      if(lastCx.ethereum)parts.push(['ETH','$'+nf(lastCx.ethereum.usd,0),lastCx.ethereum.usd_24h_change]);
+      if(lastCx.solana)parts.push(['SOL','$'+nf(lastCx.solana.usd,2),lastCx.solana.usd_24h_change]);
+    }
+    if(lastFx){
+      parts.push(['EUR/USD',nf(1/lastFx.EUR,4),null]);
+      parts.push(['GBP/USD',nf(1/lastFx.GBP,4),null]);
+      parts.push(['USD/JPY',nf(lastFx.JPY,2),null]);
+    }
+    if(!parts.length)return;
+    var html=parts.map(function(p){return '<span class="tk"><b>'+p[0]+'</b>'+p[1]+(p[2]!=null?' <span class="'+cls(p[2])+'">'+pct(p[2])+'</span>':'')+'</span>';}).join('');
+    $('#tape').innerHTML=html+html; // duplicate for seamless scroll
   }
 
   /* ---- events ---- */
@@ -410,8 +417,8 @@
   $('#keySave').addEventListener('click',function(){var v=$('#keyInput').value.trim();LS.set('td_key',v||'demo');$('#modal').classList.remove('on');refreshEq();load(curType,curSym);});
 
   /* ---- boot ---- */
-  refreshTape();refreshEq();refreshCx();refreshFx();load('equity','AAPL');
-  setInterval(function(){refreshTape();refreshEq();refreshCx();refreshFx();},60000); // 60s refresh, within free limits
+  refreshEq();refreshCx();refreshFx();load('equity','AAPL');
+  setInterval(function(){refreshEq();refreshCx();refreshFx();},60000); // 60s refresh, within free limits
 })();
 </script>
 </body>
